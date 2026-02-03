@@ -5,6 +5,7 @@ manipulación y consulta de eventos programados utilizando Python, con especial 
 zonas horarias mediante datetime y pytz.
 
 Funciones a desarrollar:
+
 - `create_event(name: str, datetime_start: datetime, timezone_str: str) -> Dict[str, str]`:
     Descripción:
     Crea un diccionario representando un evento, incluyendo su nombre, fecha y hora de inicio, y zona horaria.
@@ -13,11 +14,13 @@ Funciones a desarrollar:
         - `datetime_start` (datetime): Fecha y hora de inicio del evento.
         - `timezone_str` (str): Identificador de la zona horaria del evento.
 
+
 - `time_until_event(event: Dict[str, str]) -> timedelta`:
     Descripción:
     Calcula el tiempo restante hasta el inicio de un evento dado.
     Parámetros:
         - `event` (Dict[str, str]): Evento para calcular el tiempo restante.
+
 
 - `change_event_timezone(event: Dict[str, str], new_timezone_str: str) -> Dict[str, str]`:
     Descripción:
@@ -25,6 +28,7 @@ Funciones a desarrollar:
     Parámetros:
         - `event` (Dict[str, str]): Evento a modificar.
         - `new_timezone_str` (str): Nueva zona horaria.
+
 
 - `find_next_event(events: List[Dict[str, str]]) -> Optional[Dict[str, str]]`:
     Descripción:
@@ -47,7 +51,7 @@ Ejemplo:
 
 Salida esperada:
 - Crear eventos con sus respectivas zonas horarias.
-     {'name': 'Global Meeting', 'datetime_start': datetime.datetime(2024, 9, 10, 10, 0), 'timezone': 'UTC'}
+    {'name': 'Global Meeting', 'datetime_start': datetime.datetime(2024, 9, 10, 10, 0), 'timezone': 'UTC'}
 
 - Mostrar el tiempo restante hasta el inicio de cada uno de los eventos.
     "Time until 'Global Meeting': 1 day, 20:00:00"
@@ -67,22 +71,62 @@ import pytz
 
 def create_event(name: str, datetime_start: datetime, timezone_str: str) -> Dict[str, str]:
     # Write here your code
-    pass
+    tz = pytz.timezone(timezone_str)
+    # Localizar el datetime en la zona horaria especificada
+    localized_datetime = tz.localize(datetime_start)
+    
+    evento = {
+        "name": name,
+        "datetime_start": localized_datetime,
+        "timezone": timezone_str
+    }
+    
+    return evento
 
 
 def time_until_event(event: Dict[str, str]) -> timedelta:
     # Write here your code
-    pass
+    event_time = event["datetime_start"]
+    
+    # El datetime ya viene localizado de create_event
+    # Convertir a UTC para comparar
+    now = datetime.now(pytz.utc)
+    event_time_utc = event_time.astimezone(pytz.utc)
+    
+    return event_time_utc - now
 
 
 def change_event_timezone(event: Dict[str, str], new_timezone_str: str) -> Dict[str, str]:
     # Write here your code
-    pass
+    # Convertir el datetime a la nueva zona horaria
+    new_tz = pytz.timezone(new_timezone_str)
+    new_datetime = event["datetime_start"].astimezone(new_tz)
+    
+    event["datetime_start"] = new_datetime
+    event["timezone"] = new_timezone_str
+    
+    return event
 
 
 def find_next_event(events: List[Dict[str, str]]) -> Optional[Dict[str, str]]:
     # Write here your code
-    pass
+    now = datetime.now(pytz.utc)
+    future_events = []
+    
+    for event in events:
+        event_time = event["datetime_start"]
+        # El datetime ya viene localizado, convertir a UTC para comparar
+        event_time_utc = event_time.astimezone(pytz.utc)
+        
+        if event_time_utc > now:
+            future_events.append((event, event_time_utc))
+    
+    if not future_events:
+        return None
+    
+    # Encontrar el evento más próximo
+    next_event = min(future_events, key=lambda x: x[1])
+    return next_event[0]
 
 
 # Para probar el código, descomenta las siguientes líneas
@@ -91,6 +135,9 @@ def find_next_event(events: List[Dict[str, str]]) -> Optional[Dict[str, str]]:
 #     event2 = create_event("Python Talk", datetime(2024, 9, 10, 18, 30), "America/New_York")
 #     event3 = create_event("Data Science Workshop", datetime(2024, 9, 10, 12, 0), "Europe/London")
 
+#     # print(event1)
+#     # print(event2)
+#     # print(event3)
 #     for event in [event1, event2, event3]:
 #         time_to_event = time_until_event(event)
 #         print(f"Time until '{event['name']}':", time_to_event)

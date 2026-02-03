@@ -12,6 +12,7 @@ Funciones a desarrollar:
     Parámetros:
         - `title` (str): El título de la tarea a crear.
 
+
 - `change_task_status(task_id: int, new_status: TaskStatus) -> bool`:
     Descripción:
     Actualiza el estado de una tarea existente basándose en su ID. Retorna `True` si la operación es exitosa, o `False`
@@ -19,6 +20,7 @@ Funciones a desarrollar:
     Parámetros:
         - `task_id` (int): El ID de la tarea a actualizar.
         - `new_status` (TaskStatus): El nuevo estado asignado a la tarea.
+
 
 - `list_tasks() -> None`:
     Descripción:
@@ -63,23 +65,33 @@ tasks: Dict[int, Task] = {}
 
 def create_task(title: str) -> int:
     # Write here your code
-    pass
-
+    if tasks:
+        new_id = max(tasks.keys()) + 1
+    else:
+        new_id = 1
+    
+    tasks[new_id] = Task(new_id,title,TaskStatus.PENDING)
+    return new_id
 
 def change_task_status(task_id: int, new_status: TaskStatus) -> bool:
     # Write here your code
-    pass
+    if task_id in tasks:
+        task = tasks[task_id]
+        tasks[task_id] = Task(task.id, task.title, new_status)
+        return True
+    return False
 
 
 def list_tasks() -> None:
     # Write here your code
-    pass
+    for task in tasks.values():
+        print(f"ID: {task.id}, Title: {task.title}, Status: {task.status.value}")
 
 
 # Para probar el código, descomenta las siguientes líneas 
-# if __name__ == "__main__":
-#     id1 = create_task("Learn Python")
-#     id2 = create_task("Read Enum documentation")
-#     change_task_status(id1, TaskStatus.IN_PROGRESS)
-#     change_task_status(id2, TaskStatus.COMPLETED)
-#     list_tasks()
+if __name__ == "__main__":
+    id1 = create_task("Learn Python")
+    id2 = create_task("Read Enum documentation")
+    change_task_status(id1, TaskStatus.IN_PROGRESS)
+    change_task_status(id2, TaskStatus.COMPLETED)
+    list_tasks()

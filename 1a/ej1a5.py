@@ -14,11 +14,13 @@ Funciones a desarrollar:
         - `quantity` (int): Cantidad de unidades del producto.
         - `price` (float): Precio por unidad del producto.
 
+
 - `list_products() -> str`:
     Descripción:
     Genera y retorna una cadena de texto que lista todos los productos en el inventario, mostrando su nombre,
     categoría, cantidad y precio.
-    
+
+
 - `find_product(name: str, category: str) -> Optional[Product]`:
     Descripción:
     Busca en el inventario un producto por su nombre y categoría. Retorna el producto si se encuentra, o `None` si no
@@ -26,6 +28,7 @@ Funciones a desarrollar:
     Parámetros:
         - `name` (str): Nombre del producto a buscar.
         - `category` (str): Categoría del producto a buscar.
+
 
 Ejemplo:
     add_product("Apples", "Fruits", 100, 0.50)
@@ -56,28 +59,29 @@ inventory: Dict[Tuple[str, str], Product] = {}
 
 def add_product(name: str, category: str, quantity: int, price: float) -> Product:
     # Complete the code
-    pass
     key = (name, category)
-    if key in :
-        existing_product = 
-        existing_product. += 
-        existing_product. = 
+    if key in inventory:
+        existing_product = inventory[key]
+        existing_product.quantity += quantity
+        existing_product.price = price
     else:
-         = Product
-    return 
+        new_product = Product(name, category, quantity, price)
+        inventory[key] = new_product
+    return inventory[key]
 
 
 def list_products() -> str:
     # Complete the code
-    pass
-    for product in :
-            (f"{product.name} ({product.category}) - {product.quantity} units at ${product.price} each")
-        return
+    product_list = []
+    for product in inventory.values():
+        product_list.append(f"{product.name} ({product.category}) - {product.quantity} units at ${product.price} each")
+    return "\n".join(product_list)
 
 
 def find_product(name: str, category: str) -> Optional[Product]:
     # Write here your code
-    pass
+    key = (name, category)
+    return inventory.get(key)
 
 
 # Para probar el código, descomenta las siguientes líneas

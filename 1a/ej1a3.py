@@ -20,7 +20,8 @@ Funciones a desarrollar:
     Descripción:
     Define y retorna los tipos Book y User utilizando namedtuple, donde Book incluye los campos title, author y isbn, y
     User incluye name y email.
-    
+
+
 - register_loan(user: User, book: Book) -> bool:
     Descripción:
     Registra el préstamo de un libro a un usuario, actualizando los registros de préstamos y aumentando la popularidad
@@ -28,7 +29,8 @@ Funciones a desarrollar:
     Parámetros:
         - user (User): El usuario que realiza el préstamo.
         - book (Book): El libro que se presta.
-    
+
+
 - register_return(user: User, book: Book) -> bool:
     Descripción:
     Registra la devolución de un libro por parte de un usuario. Si el libro está en la lista de préstamos del usuario,
@@ -36,7 +38,8 @@ Funciones a desarrollar:
     Parámetros:
         - user (User): El usuario que devuelve el libro.
         - book (Book): El libro que se devuelve.
-    
+
+
 - most_popular_books(N: int = 3) -> List[Tuple[Book, int]]:
     Descripción:
     Retorna una lista de los N libros más populares y la cantidad de veces que fueron prestados, utilizando Counter
@@ -70,27 +73,36 @@ Salida esperada:
 
 
 from collections import namedtuple, defaultdict, Counter
+import re
 from typing import Tuple, Dict, List, Type
 
 
 def define_types() -> Tuple[Type[namedtuple], Type[namedtuple]]:
     # Write here your code
-    pass
+    User = namedtuple('User',['name', 'email'])
+    Book = namedtuple('Book', ['title','author', 'isbn'])
+    
+    return Book, User
 
 
 def register_loan(loans: dict[Type[namedtuple], list[Type[namedtuple]]], popularity: Counter, user: Type[namedtuple], book: Type[namedtuple]) -> bool:
     # Write here your code
-    pass
+    loans[user].append(book)
+    popularity[book] += 1
+    return True
 
 
 def register_return(loans: dict[Type[namedtuple], list[Type[namedtuple]]], user: Type[namedtuple], book: Type[namedtuple]) -> bool:
     # Write here your code
-    pass
+    if book in loans[user]:
+        loans[user].remove(book)
+        return True
+    return False
 
 
 def most_popular_books(popularity: Counter, N: int = 3) -> List[Tuple[namedtuple, int]]:
     # Write here your code
-    pass
+    return popularity.most_common(N)
 
 # Para probar el código, descomenta las siguientes líneas
 # if __name__ == "__main__":
@@ -106,6 +118,9 @@ def most_popular_books(popularity: Counter, N: int = 3) -> List[Tuple[namedtuple
 #     book2 = Book(title="Learn Python", author="Another One", isbn="0987654321")
 #     book3 = Book(title="Advanced Python", author="Expert Author", isbn="1122334455")
 #     book4 = Book(title="Python Data Science", author="Data Scientist", isbn="2233445566")
+
+#     print()
+
 
 #     register_loan(loans, popularity, user1, book1)
 #     register_loan(loans, popularity, user2, book1)
